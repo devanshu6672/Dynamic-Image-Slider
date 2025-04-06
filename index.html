@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Slider</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { display: flex; justify-content: center; align-items: center; height: 100vh; flex-direction: column; position: relative; overflow: hidden; background-color: #111; }
+        .slider-container { position: relative; width: 80%; max-width: 800px; overflow: hidden; border-radius: 15px; background: transparent; padding-bottom: 10px; }
+        .slider { display: flex; transition: opacity 1s ease-in-out; position: relative; }
+        .slide { min-width: 100%; position: absolute; opacity: 0; transition: opacity 1s ease-in-out; text-align: center; display: flex; flex-direction: column; align-items: center; }
+        .slide.active { opacity: 1;position: relative; }
+        .slide img { width: 100%; height: auto; object-fit: cover; border-radius: 0; display: block; }
+        .caption { margin-top: 10px; font-size: 16px; color: white; background: rgba(0, 0, 0, 0.6); padding: 5px 10px; border-radius: 5px; }
+        .prev, .next { position: absolute; top: 50%; transform: translateY(-50%); background-color: rgba(0,0,0,0.6); color: white; border: none; cursor: pointer; padding: 12px; font-size: 28px; border-radius: 50%; transition: background 0.3s, transform 0.2s; display: flex; align-items: center; justify-content: center; width: 60px; height: 60px; box-shadow: 0 0 10px rgba(0,0,0,0.5); }
+        .prev:hover, .next:hover { background-color: rgba(255,255,255,0.9); color: black; transform: scale(1.2); }
+        .prev { left: 10px; }
+        .next { right: 10px; }
+        .blurred-bg { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-size: cover; background-position: center; filter: blur(10px); z-index: -1; }
+        .thumbnails { display: flex; justify-content: center; padding: 5px; background: none; }
+        .thumbnail { width: 60px; height: 40px; margin: 5px; cursor: pointer; border-radius: 5px; overflow: hidden; }
+        .thumbnail img { width: 100%; height: 100%; object-fit: cover; }
+    </style>
+</head>
+<body>
+    <div class="blurred-bg"></div>
+    <div class="slider-container">
+        <div class="slider">
+            <div class="slide active">
+                <img src="https://images.pexels.com/photos/338515/pexels-photo-338515.jpeg" alt="Eiffel Tower">
+                <div class="caption">Eiffel Tower, Paris, France</div>
+            </div>
+            <div class="slide">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/d/da/Taj-Mahal.jpg" alt="Taj Mahal">
+                <div class="caption">Taj Mahal, Agra, India</div>
+            </div>
+            <div class="slide">
+                <img src="https://images.pexels.com/photos/356807/pexels-photo-356807.jpeg" alt="Colosseum">
+                <div class="caption">Colosseum, Rome, Italy</div>
+            </div>
+        </div>
+        <button class="prev">&#10094;</button>
+        <button class="next">&#10095;</button>
+        <div class="thumbnails">
+            <div class="thumbnail"><img src="https://images.pexels.com/photos/338515/pexels-photo-338515.jpeg" onclick="jumpToSlide(0)"></div>
+            <div class="thumbnail"><img src="https://upload.wikimedia.org/wikipedia/commons/d/da/Taj-Mahal.jpg" onclick="jumpToSlide(1)"></div>
+            <div class="thumbnail"><img src="https://images.pexels.com/photos/356807/pexels-photo-356807.jpeg" onclick="jumpToSlide(2)"></div>
+        </div>
+    </div>
+    <script>
+        let index = 0;
+        const slides = document.querySelectorAll('.slide');
+        const blurredBg = document.querySelector('.blurred-bg');
+
+        function updateBackground() {
+            const currentSlide = slides[index].querySelector('img').src;
+            blurredBg.style.backgroundImage = `url('${currentSlide}')`;
+        }
+        
+        function moveSlide(step) {
+            slides[index].classList.remove('active');
+            index = (index + step + slides.length) % slides.length;
+            slides[index].classList.add('active');
+            updateBackground();
+        }
+        
+        function jumpToSlide(slideIndex) {
+            slides[index].classList.remove('active');
+            index = slideIndex;
+            slides[index].classList.add('active');
+            updateBackground();
+        }
+        
+        function autoSlide() {
+            moveSlide(1);
+        }
+        
+        document.querySelector(".prev").addEventListener("click", () => moveSlide(-1));
+        document.querySelector(".next").addEventListener("click", () => moveSlide(1));
+        
+        setInterval(autoSlide, 5000);
+        updateBackground();
+    </script>
+</body>
+</html>
